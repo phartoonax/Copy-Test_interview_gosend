@@ -1,12 +1,10 @@
-import 'dart:typed_data';
-
 class User {
   int id = 0;
   String name = '';
 
   int? nik = 0;
   String password = '';
-  Uint8List? picture;
+  String? picture;
 
   User.empty();
 

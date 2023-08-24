@@ -6,7 +6,7 @@ class Orders {
   int idUser = 0;
   int isnew = 1;
   int dateEpoch = 0;
-  Uint8List? pictureOrder;
+  String? pictureOrder;
   double? latitude1 = 0.0;
   double? langitude1 = 0.0;
   double? latitude2 = 0.0;

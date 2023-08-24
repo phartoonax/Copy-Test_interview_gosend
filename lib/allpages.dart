@@ -123,8 +123,9 @@ class _DoneOrderPageState extends State<DoneOrderPage> {
                               width: double.infinity,
                               height: 300,
                               color: Colors.grey[300],
-                              child: Image.memory(
-                                  widget.listordersdone[index]['picorder'],
+                              child: Image.file(
+                                  File(
+                                      widget.listordersdone[index]['picorder']),
                                   fit: BoxFit.fill),
                             ),
                           ),
@@ -286,8 +287,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: CircleAvatar(
                           radius: 70.0,
                           foregroundImage: widget.userdata['pic'] != null
-                              ? Image.memory(
-                                  widget.userdata['pic'],
+                              ? Image.file(
+                                  File(widget.userdata['pic']),
                                   fit: BoxFit.cover,
                                 ).image
                               : null,
@@ -381,8 +382,7 @@ TextEditingController passwordController = TextEditingController();
 DatabaseHandler dbHandler = DatabaseHandler();
 
 class _editProfileState extends State<editProfile> {
-  File? _imagetaken;
-  Uint8List? picture;
+  String? picture;
   // This is the image picker
   final _picker = ImagePicker();
   // Implementing the image picker
@@ -390,8 +390,7 @@ class _editProfileState extends State<editProfile> {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null) {
       setState(() {
-        _imagetaken = File(photo.path);
-        picture = _imagetaken?.readAsBytesSync();
+        picture = photo.path;
       });
     }
   }
@@ -449,8 +448,8 @@ class _editProfileState extends State<editProfile> {
                             child: CircleAvatar(
                               radius: 70.0,
                               foregroundImage: picture != null
-                                  ? Image.memory(
-                                      picture!,
+                                  ? Image.file(
+                                      File(picture!),
                                       fit: BoxFit.cover,
                                     ).image
                                   : null,

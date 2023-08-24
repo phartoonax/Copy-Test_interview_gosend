@@ -12,7 +12,7 @@ class DatabaseHandler {
         await database.execute(
             "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, nik INTEGER, pass TEXT NOT NULL, pic BLOB )");
         await database.execute(
-            "CREATE TABLE orders (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, iduser INTEGER NOT NULL,  isNew INTEGER NOT NULL, date INTEGER NOT NULL, lat1 DOUBLE, lang1 DOUBLE, lat2 DOUBLE, lang2 DOUBLE, picorder BLOB)");
+            "CREATE TABLE orders (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, iduser INTEGER NOT NULL,  isNew INTEGER NOT NULL, date INTEGER NOT NULL, lat1 DOUBLE, lang1 DOUBLE, lat2 DOUBLE, lang2 DOUBLE, picorder STRING)");
         User userutama = User(id: 0, name: 'DRIVER 1', password: '1234');
         Orders dummyOrder = Orders(
             id: 0,
@@ -74,8 +74,8 @@ class DatabaseHandler {
 
   Future<List<Orders>> getAllOrdersByStatus(int status, int iduser) async {
     final Database db = await initializedDB();
-    List<Map<String, dynamic>> result =
-        await db.query('orders', where: "isNew='$status'");
+    List<Map<String, dynamic>> result = await db.query('orders',
+        where: 'isNew=? and iduser=?', whereArgs: [status, iduser], limit: 50);
 
     return result.map((e) => Orders.fromMap(e)).toList();
   }

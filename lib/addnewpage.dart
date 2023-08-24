@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -22,6 +21,7 @@ class AddPhotoPage extends StatefulWidget {
 
 class _AddPhotoPageState extends State<AddPhotoPage> {
   File? _image;
+  String? path;
 
   // This is the image picker
   final _picker = ImagePicker();
@@ -31,6 +31,7 @@ class _AddPhotoPageState extends State<AddPhotoPage> {
     if (photo != null) {
       setState(() {
         _image = File(photo.path);
+        path = photo.path;
       });
     }
   }
@@ -44,7 +45,7 @@ class _AddPhotoPageState extends State<AddPhotoPage> {
           IconButton(
             onPressed: () {
               // databaseFactory.deleteDatabase('gosend_clone.db');
-              String tempimage = base64Encode(_image!.readAsBytesSync());
+              String tempimage = path!;
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -80,7 +81,7 @@ class _AddPhotoPageState extends State<AddPhotoPage> {
                     height: 300,
                     color: Colors.grey[300],
                     child: _image != null
-                        ? Image.file(_image!, fit: BoxFit.cover)
+                        ? Image.file(File(path!), fit: BoxFit.cover)
                         : const Text('Please select an image'),
                   ),
                   const Center()
@@ -176,7 +177,7 @@ class _AddCoordinatePageState extends State<AddCoordinatePage> {
                                 isnew: 0,
                                 dateEpoch:
                                     DateTime.now().millisecondsSinceEpoch,
-                                pictureOrder: base64Decode(widget.Imagebase64),
+                                pictureOrder: widget.Imagebase64,
                                 langitude1: double.parse(lang1Controller.text),
                                 latitude1: double.parse(lat1Controller.text),
                                 langitude2: double.parse(lang2Controller.text),
