@@ -200,7 +200,7 @@ class _AddCoordinatePageState extends State<AddCoordinatePage> {
       ),
       body: SingleChildScrollView(
         child: SizedBox(
-          height: 0.825.sh,
+          height: 0.85.sh,
           child: SafeArea(
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),

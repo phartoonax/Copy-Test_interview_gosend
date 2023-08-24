@@ -409,7 +409,7 @@ class _editProfileState extends State<editProfile> {
     return Scaffold(
         body: SingleChildScrollView(
       child: SizedBox(
-        height: 0.79.sh,
+        height: 0.8.sh,
         child: Center(
           child: Column(
             children: [
