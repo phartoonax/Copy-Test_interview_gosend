@@ -7,7 +7,7 @@ class DatabaseHandler {
   Future<Database> initializedDB() async {
     String path = await getDatabasesPath();
     return openDatabase(
-      join(path, "gosend_clone.db"),
+      join(path, "gosend_clone_new.db"),
       onCreate: (database, version) async {
         await database.execute(
             "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, nik INTEGER, pass TEXT NOT NULL, pic BLOB )");

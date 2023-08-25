@@ -1,6 +1,7 @@
 // ignore_for_file: unused_element
 
 import 'dart:async';
+import 'package:test_interview_gosend/db_handler.dart';
 import 'package:test_interview_gosend/main.dart';
 import 'login.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class Splashpage extends StatefulWidget {
 }
 
 class _SplashpageState extends State<Splashpage> {
+  DatabaseHandler dbHandler = DatabaseHandler();
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   int? wtf;
   late final Future<int> _userid = _prefs.then((SharedPreferences prefs) {
@@ -26,6 +28,7 @@ class _SplashpageState extends State<Splashpage> {
   @override
   void initState() {
     super.initState();
+    dbHandler.initializedDB();
     _userid.then((value) => wtf = value);
   }
 

@@ -19,7 +19,14 @@ class _LoginPageState extends State<LoginPage> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
+  void initState() {
+    super.initState();
+    dbHandler.initializedDB();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Container(
@@ -103,12 +110,15 @@ class _LoginPageState extends State<LoginPage> {
                           const SnackBar(
                             content: Text('Processing Data'),
                           ),
-                        );
+                        ); dbHandler.getAllUsers().then((value) {
+                          for (var element in value) {print("semua value:${element.toMap()}");}
+                        });
                         dbHandler
                             .getLogin(usernameController.text,
                                 passwordController.text)
                             .then((value) {
                           print("object login id: ${value?.id}");
+
                           if (value != null) {
                             _prefs.then((value) =>
                                 value.setBool('loginstatus', rememberValue));

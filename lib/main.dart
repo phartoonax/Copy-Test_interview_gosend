@@ -72,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
   User userlogedin = User.empty();
   Map listuser = {};
+  bool finishedloading=false;
   List<Map> listorder = List<Map>.empty(growable: true);
   List<Map> listorderdone = List<Map>.empty(growable: true);
   @override
@@ -87,13 +88,21 @@ class _MyHomePageState extends State<MyHomePage> {
         .getAllOrdersByStatus(1, listuser['id'])
         .then((value) => value.forEach((element) {
               listorder.add(element.toMap());
+              setState(() {
+
+              });
             }));
     dbHandler
         .getAllOrdersByStatus(0, listuser['id'])
-        .then((value) => value.forEach((element) {
-              listorderdone.add(element.toMap());
-              setState(() {}); // only needed for last element
-            }));
+        .then((value) {
+      value.forEach((element) {
+        listorderdone.add(element.toMap());
+         // only needed for last element
+      });
+      setState(() {
+        finishedloading=true;
+      });
+    });
   }
 
 
@@ -123,13 +132,15 @@ class _MyHomePageState extends State<MyHomePage> {
           NavigationDestination(icon: Icon(Icons.face), label: "Profil"),
         ],
       ),
-      body: <Widget>[
+      body: finishedloading==true?<Widget>[
         NewOrderPage(listorders: listorder, userdata: listuser),
         DoneOrderPage(listordersdone: listorderdone, userdata: listuser),
         ProfilePage(
           userdata: listuser,
         ),
-      ][currentPageIndex],
+      ][currentPageIndex]: const Center(
+        child: CircularProgressIndicator()
+      ),
     );
   }
 }
