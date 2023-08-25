@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 class Orders {
   int id = 0;
   String name = '';

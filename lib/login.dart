@@ -107,12 +107,13 @@ class _LoginPageState extends State<LoginPage> {
                         dbHandler
                             .getLogin(usernameController.text,
                                 passwordController.text)
-                            .then((value) async {
+                            .then((value) {
                           print("object login id: ${value?.id}");
                           if (value != null) {
-                            final SharedPreferences prefs = await _prefs;
-                            prefs.setBool('loginstatus', rememberValue);
-                            prefs.setInt('iduser', value.id);
+                            _prefs.then((value) =>
+                                value.setBool('loginstatus', rememberValue));
+                            _prefs.then(
+                                (values) => values.setInt('iduser', value.id));
                             Navigator.of(context)
                                 .pushReplacement(MaterialPageRoute(
                                     builder: (context) => MyHomePage(
