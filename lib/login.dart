@@ -104,17 +104,13 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        /* String vals = "";
+                        String vals = "";
                         dbHandler.getAllUsers().then((value) {
                           for (var element in value) {
-                            vals += element.toString();
+                            vals += element.toMap().toString();
                           }
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('login: $vals'),
-                            ),
-                          );
-                        }); */
+                        });
+
                         FocusManager.instance.primaryFocus?.unfocus();
 
                         dbHandler
@@ -135,8 +131,8 @@ class _LoginPageState extends State<LoginPage> {
                                         )));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('login not found'),
+                              SnackBar(
+                                content: Text('login not found, use $vals'),
                               ),
                             );
                           }

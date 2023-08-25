@@ -37,7 +37,15 @@ class _MyAppState extends State<MyApp> {
       db.query('users').then((value) {
         if (value.isEmpty) {
           databaseFactory.deleteDatabase(db.path);
-          dbHandler.initializedDB();
+          dbHandler.initializedDB().then((value) =>
+              db.query('users').then((value) {
+                String bocor = '';
+                value.forEach((element) {
+                  bocor += element.toString();
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('bocoran db. data user: $bocor')));
+              }));
         }
       });
       db.query('orders').then((value) {
