@@ -10,7 +10,7 @@ class DatabaseHandler {
       join(path, "gosend_clone_new.db"),
       onCreate: (database, version) async {
         await database.execute(
-            "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, nik INTEGER, pass TEXT NOT NULL, pic BLOB )");
+            "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, nik INTEGER, pass TEXT NOT NULL, pic STRING)");
         await database.execute(
             "CREATE TABLE orders (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, iduser INTEGER NOT NULL,  isNew INTEGER NOT NULL, date INTEGER NOT NULL, lat1 DOUBLE, lang1 DOUBLE, lat2 DOUBLE, lang2 DOUBLE, picorder STRING)");
         User userutama = User(id: 0, name: 'DRIVER 1', password: '1234');

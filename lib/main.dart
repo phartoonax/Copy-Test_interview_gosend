@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sqflite/sqflite.dart';
 import 'allpages.dart';
 import 'user.dart';
 import 'orders.dart';
@@ -32,8 +33,20 @@ class _MyAppState extends State<MyApp> {
   }
 
   void init() async {
-    // databaseFactory.deleteDatabase('gosend_clone.db');
-    dbHandler.initializedDB();
+    dbHandler.initializedDB().then((db) {
+      db.query('users').then((value) {
+        if (value.isEmpty) {
+          databaseFactory.deleteDatabase(db.path);
+          dbHandler.initializedDB();
+        }
+      });
+      db.query('orders').then((value) {
+        if (value.isEmpty) {
+          databaseFactory.deleteDatabase(db.path);
+          dbHandler.initializedDB();
+        }
+      });
+    });
   }
 
   @override
@@ -72,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
   User userlogedin = User.empty();
   Map listuser = {};
-  bool finishedloading=false;
+  bool finishedloading = false;
   List<Map> listorder = List<Map>.empty(growable: true);
   List<Map> listorderdone = List<Map>.empty(growable: true);
   @override
@@ -88,24 +101,18 @@ class _MyHomePageState extends State<MyHomePage> {
         .getAllOrdersByStatus(1, listuser['id'])
         .then((value) => value.forEach((element) {
               listorder.add(element.toMap());
-              setState(() {
-
-              });
+              setState(() {});
             }));
-    dbHandler
-        .getAllOrdersByStatus(0, listuser['id'])
-        .then((value) {
+    dbHandler.getAllOrdersByStatus(0, listuser['id']).then((value) {
       value.forEach((element) {
         listorderdone.add(element.toMap());
-         // only needed for last element
+        // only needed for last element
       });
       setState(() {
-        finishedloading=true;
+        finishedloading = true;
       });
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -132,15 +139,15 @@ class _MyHomePageState extends State<MyHomePage> {
           NavigationDestination(icon: Icon(Icons.face), label: "Profil"),
         ],
       ),
-      body: finishedloading==true?<Widget>[
-        NewOrderPage(listorders: listorder, userdata: listuser),
-        DoneOrderPage(listordersdone: listorderdone, userdata: listuser),
-        ProfilePage(
-          userdata: listuser,
-        ),
-      ][currentPageIndex]: const Center(
-        child: CircularProgressIndicator()
-      ),
+      body: finishedloading == true
+          ? <Widget>[
+              NewOrderPage(listorders: listorder, userdata: listuser),
+              DoneOrderPage(listordersdone: listorderdone, userdata: listuser),
+              ProfilePage(
+                userdata: listuser,
+              ),
+            ][currentPageIndex]
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 }

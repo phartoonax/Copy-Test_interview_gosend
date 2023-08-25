@@ -26,7 +26,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Container(
@@ -105,19 +104,24 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        /* String vals = "";
+                        dbHandler.getAllUsers().then((value) {
+                          for (var element in value) {
+                            vals += element.toString();
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('login: $vals'),
+                            ),
+                          );
+                        }); */
                         FocusManager.instance.primaryFocus?.unfocus();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Processing Data'),
-                          ),
-                        ); dbHandler.getAllUsers().then((value) {
-                          for (var element in value) {print("semua value:${element.toMap()}");}
-                        });
+
                         dbHandler
                             .getLogin(usernameController.text,
                                 passwordController.text)
                             .then((value) {
-                          print("object login id: ${value?.id}");
+                          // print("object login id: ${value?.id}");
 
                           if (value != null) {
                             _prefs.then((value) =>
@@ -129,6 +133,12 @@ class _LoginPageState extends State<LoginPage> {
                                     builder: (context) => MyHomePage(
                                           iduser: value.id,
                                         )));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('login not found'),
+                              ),
+                            );
                           }
                         });
                       }
