@@ -128,7 +128,7 @@ class _AddCoordinatePageState extends State<AddCoordinatePage> {
 
   void init() async {
     final SharedPreferences prefs = await _prefs;
-    int iduser = await prefs.getInt('iduser')!;
+    int iduser = prefs.getInt('iduser')!;
     dbHandler.getLoginById(iduser).then((value) => userlogedin = value.toMap());
   }
 

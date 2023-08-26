@@ -403,11 +403,12 @@ class _editProfileState extends State<editProfile> {
     editnama.text = widget.userdata["nama"];
     passwordController.text = widget.userdata["pass"];
     nik.text =
-    widget.userdata["nik"] != null ? widget.userdata["nik"].toString() : "";
+        widget.userdata["nik"] != null ? widget.userdata["nik"].toString() : "";
     if (widget.userdata["pic"] != null) {
       picture = widget.userdata["pic"];
     }
   }
+
   @override
   Widget build(BuildContext context) {
     // databaseFactory.deleteDatabase('gosend_clone.db');
