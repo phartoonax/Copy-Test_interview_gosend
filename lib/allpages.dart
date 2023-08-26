@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +8,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_interview_gosend/addnewpage.dart';
 import 'package:test_interview_gosend/db_handler.dart';
-import 'package:test_interview_gosend/splash.dart';
+import 'package:test_interview_gosend/main.dart';
 import 'package:test_interview_gosend/user.dart';
 
 class NewOrderPage extends StatefulWidget {
@@ -239,8 +238,11 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       prefs.setBool('loginstatus', false);
       prefs.remove('iduser');
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const Splashpage()));
+      // Navigator.of(context).pushReplacement(
+      //     MaterialPageRoute(builder: (context) => const Splashpage()));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const MyApp()),
+          (Route<dynamic> route) => false);
     });
   }
 
@@ -374,11 +376,11 @@ class editProfile extends StatefulWidget {
   State<editProfile> createState() => _editProfileState();
 }
 
-final _formKey = GlobalKey<FormState>();
-String? onerror;
 TextEditingController editnama = TextEditingController();
 TextEditingController nik = TextEditingController();
 TextEditingController passwordController = TextEditingController();
+final _formKey = GlobalKey<FormState>();
+String? onerror;
 DatabaseHandler dbHandler = DatabaseHandler();
 
 class _editProfileState extends State<editProfile> {
@@ -396,8 +398,8 @@ class _editProfileState extends State<editProfile> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // databaseFactory.deleteDatabase('gosend_clone.db');
+  void initState() {
+    super.initState();
     editnama.text = widget.userdata["nama"];
     passwordController.text = widget.userdata["pass"];
     nik.text =
@@ -405,6 +407,12 @@ class _editProfileState extends State<editProfile> {
     if (widget.userdata["pic"] != null) {
       picture = widget.userdata["pic"];
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // databaseFactory.deleteDatabase('gosend_clone.db');
+
     return Scaffold(
         body: SingleChildScrollView(
       child: SizedBox(
@@ -516,6 +524,7 @@ class _editProfileState extends State<editProfile> {
                                       fontWeight: FontWeight.w600),
                                 )),
                             TextFormField(
+                              keyboardType: TextInputType.number,
                               controller: nik,
                               maxLines: 1,
                               decoration: InputDecoration(
@@ -568,13 +577,18 @@ class _editProfileState extends State<editProfile> {
                                 nik:
                                     nik.text != '' ? int.parse(nik.text) : null,
                                 picture: picture);
-                            dbHandler
-                                .updateUserUsingHelper(updateuser)
-                                .then((value) => Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Splashpage(),
-                                    )));
+                            dbHandler.updateUserUsingHelper(updateuser).then(
+                                (value)
+                                // Navigator.popUntil(
+                                //     context, (route) => route.isFirst));
+                                //---------------------------
+                                // Navigator.of(context).pushReplacement(
+                                //     MaterialPageRoute(builder: (context) => const Splashpage()))
+                                //---------------------------
+                                {
+                              Navigator.pushNamedAndRemoveUntil(context,
+                                  '/splash', (Route<dynamic> route) => false);
+                            });
                           }
                         },
                         style: ElevatedButton.styleFrom(

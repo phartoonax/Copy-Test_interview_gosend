@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:test_interview_gosend/db_handler.dart';
 import 'package:test_interview_gosend/main.dart';
 
@@ -12,6 +13,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   DatabaseHandler dbHandler = DatabaseHandler();
+  String valsU = "Isi User:";
+  String valsO = "Isi Order:";
   final _formKey = GlobalKey<FormState>();
   var rememberValue = false;
   late final TextEditingController usernameController = TextEditingController();
@@ -21,7 +24,28 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    dbHandler.initializedDB();
+    init();
+  }
+
+  void init() async {
+    Database db = await dbHandler.initializedDB();
+//build test code
+
+    List<Map<String, dynamic>> resultU = await db.query('users');
+    for (var element in resultU) {
+      setState(() {
+        valsU += element.toString();
+      });
+    }
+
+    List<Map<String, dynamic>> resultO = await db.query('orders');
+    for (var element2 in resultO) {
+      setState(() {
+        valsO += element2.toString();
+      });
+    }
+
+    //end build code
   }
 
   @override
@@ -123,11 +147,11 @@ class _LoginPageState extends State<LoginPage> {
                             _prefs.then((value) =>
                                 value.setBool('loginstatus', rememberValue));
                             _prefs.then(
-                                (values) => values.setInt('iduser', value.id));
+                                (values) => values.setInt('iduser', value.id!));
                             Navigator.of(context)
                                 .pushReplacement(MaterialPageRoute(
                                     builder: (context) => MyHomePage(
-                                          iduser: value.id,
+                                          iduser: value.id!,
                                         )));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -150,8 +174,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
+                  /*Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Text((valsU)),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Text((valsO)),
+                  ),*/
                 ],
               ),
             )

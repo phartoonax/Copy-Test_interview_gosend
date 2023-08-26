@@ -1,15 +1,15 @@
 class User {
-  int id = 0;
+  int? id;
   String name = '';
 
-  int? nik = 0;
+  int? nik;
   String password = '';
   String? picture;
 
   User.empty();
 
   User({
-    required this.id,
+    this.id,
     required this.name,
     this.nik,
     required this.password,

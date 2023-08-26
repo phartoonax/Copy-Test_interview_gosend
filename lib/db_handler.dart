@@ -4,34 +4,53 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHandler {
+  String dBName = 'gosend_clone_new.db';
+
+  static Database? _database;
+
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await initializedDB();
+    return _database!;
+  }
+
   Future<Database> initializedDB() async {
-    String path = await getDatabasesPath();
-    return openDatabase(
-      join(path, "gosend_clone_new.db"),
-      onCreate: (database, version) async {
-        await database.execute(
-            "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, nik INTEGER, pass TEXT NOT NULL, pic STRING)");
-        await database.execute(
-            "CREATE TABLE orders (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, iduser INTEGER NOT NULL,  isNew INTEGER NOT NULL, date INTEGER NOT NULL, lat1 DOUBLE, lang1 DOUBLE, lat2 DOUBLE, lang2 DOUBLE, picorder STRING)");
-        User userutama = User(id: 0, name: 'DRIVER 1', password: '1234');
-        Orders dummyOrder = Orders(
-            id: 0,
-            name: 'tes',
-            idUser: 0,
-            isnew: 1,
-            dateEpoch: DateTime.now().millisecondsSinceEpoch);
-        Orders dummyOrder2 = Orders(
-            id: 1,
-            name: 'tes 2',
-            idUser: 0,
-            isnew: 1,
-            dateEpoch: DateTime.now().millisecondsSinceEpoch);
-        insertUser(userutama).then((value) => print("Check 1 = $value"));
-        insertOrder(dummyOrder).then((value) => print("Check 2 = $value"));
-        insertOrder(dummyOrder2).then((value) => print("Check 2 = $value"));
-      },
+    Database db = await _getDB();
+
+    return db;
+    // String path = await getDatabasesPath();
+    // return openDatabase(
+    //   join(path, "gosend_clone_new.db"),
+    //   onCreate: (database, version) async {
+
+    //   },
+    //   version: 1,
+    // );
+  }
+
+  Future<Database> _getDB() async {
+    final path = await _getPath(); // Get a location using getDatabasesPath
+
+    return await openDatabase(
+      path,
+      onCreate: _onCreate,
       version: 1,
+      onConfigure: (db) async => await db.execute('PRAGMA foreign_keys = ON'),
     );
+  }
+
+  Future<void> _onCreate(Database db, int version) async {
+    // Run the CREATE {users} TABLE statement on the database.
+    await db.execute(
+        "CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, nik INTEGER, pass TEXT NOT NULL, pic STRING)");
+    await db.execute(
+        "CREATE TABLE orders (id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT NOT NULL, iduser INTEGER NOT NULL,  isNew INTEGER NOT NULL, date INTEGER NOT NULL, lat1 DOUBLE, lang1 DOUBLE, lat2 DOUBLE, lang2 DOUBLE, picorder STRING)");
+  }
+
+  Future<String> _getPath() async {
+    String databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, dBName);
+    return path;
   }
 
   Future<int> insertUser(User user) async {
