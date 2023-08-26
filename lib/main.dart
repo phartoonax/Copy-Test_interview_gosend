@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+  class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.iduser});
 
   final int iduser;
