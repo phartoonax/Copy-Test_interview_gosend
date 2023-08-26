@@ -9,8 +9,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_interview_gosend/db_handler.dart';
+import 'package:test_interview_gosend/main.dart';
 import 'package:test_interview_gosend/orders.dart';
 import 'package:test_interview_gosend/splash.dart';
+// import 'package:test_interview_gosend/splash.dart';
 
 class AddPhotoPage extends StatefulWidget {
   const AddPhotoPage({super.key, required this.changedorder});
@@ -184,11 +186,15 @@ class _AddCoordinatePageState extends State<AddCoordinatePage> {
                                 latitude2: double.parse(lat2Controller.text));
 
                             dbHandler.updateOrderUsingHelper(orderbaru);
-                            Navigator.pushReplacement(
-                                context,
+                            // Navigator.popUntil(
+                            //     context, (route) => route.isFirst);
+                            // Navigator.of(context).pushReplacement(
+                            //     MaterialPageRoute(builder: (context) => const Splashpage()));
+                            Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
-                                  builder: (context) => const Splashpage(),
-                                ));
+                                    builder: (context) => MyHomePage(iduser: widget.changedorder['iduser'],
+                                    )),
+                                    (Route<dynamic> route) => false);
                           },
                         )
                       ]),

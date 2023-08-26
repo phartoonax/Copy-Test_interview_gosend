@@ -239,8 +239,13 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       prefs.setBool('loginstatus', false);
       prefs.remove('iduser');
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const Splashpage()));
+      // Navigator.of(context).pushReplacement(
+      //     MaterialPageRoute(builder: (context) => const Splashpage()));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => Splashpage(
+              )),
+              (Route<dynamic> route) => false);
     });
   }
 
@@ -374,11 +379,11 @@ class editProfile extends StatefulWidget {
   State<editProfile> createState() => _editProfileState();
 }
 
-final _formKey = GlobalKey<FormState>();
-String? onerror;
 TextEditingController editnama = TextEditingController();
 TextEditingController nik = TextEditingController();
 TextEditingController passwordController = TextEditingController();
+final _formKey = GlobalKey<FormState>();
+String? onerror;
 DatabaseHandler dbHandler = DatabaseHandler();
 
 class _editProfileState extends State<editProfile> {
@@ -396,15 +401,20 @@ class _editProfileState extends State<editProfile> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // databaseFactory.deleteDatabase('gosend_clone.db');
+  void initState() {
+    super.initState();
     editnama.text = widget.userdata["nama"];
     passwordController.text = widget.userdata["pass"];
     nik.text =
-        widget.userdata["nik"] != null ? widget.userdata["nik"].toString() : "";
+    widget.userdata["nik"] != null ? widget.userdata["nik"].toString() : "";
     if (widget.userdata["pic"] != null) {
       picture = widget.userdata["pic"];
     }
+  }
+  @override
+  Widget build(BuildContext context) {
+    // databaseFactory.deleteDatabase('gosend_clone.db');
+
     return Scaffold(
         body: SingleChildScrollView(
       child: SizedBox(
@@ -515,7 +525,7 @@ class _editProfileState extends State<editProfile> {
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600),
                                 )),
-                            TextFormField(
+                            TextFormField(keyboardType: TextInputType.number,
                               controller: nik,
                               maxLines: 1,
                               decoration: InputDecoration(
@@ -568,13 +578,22 @@ class _editProfileState extends State<editProfile> {
                                 nik:
                                     nik.text != '' ? int.parse(nik.text) : null,
                                 picture: picture);
-                            dbHandler
-                                .updateUserUsingHelper(updateuser)
-                                .then((value) => Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Splashpage(),
-                                    )));
+                            dbHandler.updateUserUsingHelper(updateuser).then((value)
+                                // Navigator.popUntil(
+                                //     context, (route) => route.isFirst));
+                              //---------------------------
+                            // Navigator.of(context).pushReplacement(
+                            //     MaterialPageRoute(builder: (context) => const Splashpage()))
+                              //---------------------------
+                            {
+
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, '/splash', (
+                                  Route<dynamic> route) => false);
+
+                            }
+                            );
+
                           }
                         },
                         style: ElevatedButton.styleFrom(

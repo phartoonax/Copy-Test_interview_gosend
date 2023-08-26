@@ -1,5 +1,5 @@
 class Orders {
-  int id = 0;
+  int? id;
   String name = '';
   int idUser = 0;
   int isnew = 1;
@@ -13,7 +13,7 @@ class Orders {
   Orders.empty();
 
   Orders({
-    required this.id,
+    this.id,
     required this.name,
     required this.idUser,
     required this.isnew,
