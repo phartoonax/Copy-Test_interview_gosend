@@ -86,8 +86,9 @@ class _DoneOrderPageState extends State<DoneOrderPage> {
               .format(DateTime.fromMillisecondsSinceEpoch(element1['date'])) !=
           filterdate) {
         if (filterdate != '') {
-          listdatefilter
-              .add({'date': filterdate, 'listorders': listdatefiltertemp});
+          List<Map> templist = List.from(listdatefiltertemp);
+
+          listdatefilter.add({'date': filterdate, 'listorders': templist});
         }
         listdatefiltertemp.clear();
         filterdate = DateFormat('dd/MM/yyyy')
@@ -95,8 +96,9 @@ class _DoneOrderPageState extends State<DoneOrderPage> {
         if (widget.listordersdone.last == element1) {
           //if last on order
           listdatefiltertemp.add(element1);
-          listdatefilter
-              .add({'date': filterdate, 'listorders': listdatefiltertemp});
+          List<Map> templist = List.from(listdatefiltertemp);
+
+          listdatefilter.add({'date': filterdate, 'listorders': templist});
         } else {
           //else means data still there and now is new date
           listdatefiltertemp.add(element1);
@@ -106,8 +108,9 @@ class _DoneOrderPageState extends State<DoneOrderPage> {
         listdatefiltertemp.add(element1);
         if (widget.listordersdone.last == element1) {
           //if last maka akan masuk list
-          listdatefilter
-              .add({'date': filterdate, 'listorders': listdatefiltertemp});
+          List<Map> templist = List.from(listdatefiltertemp);
+
+          listdatefilter.add({'date': filterdate, 'listorders': templist});
         }
       }
     }
