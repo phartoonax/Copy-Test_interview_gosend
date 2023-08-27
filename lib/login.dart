@@ -128,13 +128,6 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        String vals = "";
-                        dbHandler.getAllUsers().then((value) {
-                          for (var element in value) {
-                            vals += element.toMap().toString();
-                          }
-                        });
-
                         FocusManager.instance.primaryFocus?.unfocus();
 
                         dbHandler
@@ -155,8 +148,8 @@ class _LoginPageState extends State<LoginPage> {
                                         )));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('login not found, use $vals'),
+                              const SnackBar(
+                                content: Text('login not found'),
                               ),
                             );
                           }

@@ -683,8 +683,12 @@ class _editProfileState extends State<editProfile> {
                                 //     MaterialPageRoute(builder: (context) => const Splashpage()))
                                 //---------------------------
                                 {
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  '/splash', (Route<dynamic> route) => false);
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) => MyHomePage(
+                                            iduser: updateuser.id!,
+                                          )),
+                                  (Route<dynamic> route) => false);
                             });
                           }
                         },
