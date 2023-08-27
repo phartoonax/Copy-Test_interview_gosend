@@ -58,7 +58,8 @@ class _SplashpageState extends State<Splashpage> {
         name: 'tes',
         idUser: 1,
         isnew: 1,
-        dateEpoch: DateTime.now().millisecondsSinceEpoch);
+        dateEpoch: (DateTime.now().subtract(const Duration(days: 2)))
+            .millisecondsSinceEpoch);
     Orders dummyOrder2 = Orders(
         name: 'tes 2',
         idUser: 1,
@@ -66,8 +67,7 @@ class _SplashpageState extends State<Splashpage> {
         dateEpoch: DateTime.now().millisecondsSinceEpoch);
     if (result.isEmpty) {
       await dbHandler
-          .insertUser(userutama)
-          .then((value) => print("Check 1 = $value"));
+          .insertUser(userutama);
 
       check1 = true;
     } else {
@@ -75,11 +75,9 @@ class _SplashpageState extends State<Splashpage> {
     }
     if (result2.isEmpty) {
       await dbHandler
-          .insertOrder(dummyOrder)
-          .then((value) => print("Check 2,1 = $value"));
+          .insertOrder(dummyOrder);
       await dbHandler
-          .insertOrder(dummyOrder2)
-          .then((value) => print("Check 2,2 = $value"));
+          .insertOrder(dummyOrder2);
       check2 = true;
     } else {
       check2 = false;

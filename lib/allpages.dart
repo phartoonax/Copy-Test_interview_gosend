@@ -1,9 +1,12 @@
+// ignore_for_file: avoid_unnecessary_containers, camel_case_types
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_interview_gosend/addnewpage.dart';
@@ -75,149 +78,243 @@ class _DoneOrderPageState extends State<DoneOrderPage> {
   Widget build(BuildContext context) {
     const Distance distance = Distance();
     late final MapController mapController = MapController();
-
+    List<Map> listdatefilter = List<Map>.empty(growable: true);
+    String filterdate = '';
+    List<Map> listdatefiltertemp = List<Map>.empty(growable: true);
+    for (var element1 in widget.listordersdone) {
+      if (DateFormat('dd/MM/yyyy') //check if new date
+              .format(DateTime.fromMillisecondsSinceEpoch(element1['date'])) !=
+          filterdate) {
+        if (filterdate != '') {
+          listdatefilter
+              .add({'date': filterdate, 'listorders': listdatefiltertemp});
+        }
+        listdatefiltertemp.clear();
+        filterdate = DateFormat('dd/MM/yyyy')
+            .format(DateTime.fromMillisecondsSinceEpoch(element1['date']));
+        if (widget.listordersdone.last == element1) {
+          //if last on order
+          listdatefiltertemp.add(element1);
+          listdatefilter
+              .add({'date': filterdate, 'listorders': listdatefiltertemp});
+        } else {
+          //else means data still there and now is new date
+          listdatefiltertemp.add(element1);
+        }
+      } else {
+        //date sama dengan sebelumnya
+        listdatefiltertemp.add(element1);
+        if (widget.listordersdone.last == element1) {
+          //if last maka akan masuk list
+          listdatefilter
+              .add({'date': filterdate, 'listorders': listdatefiltertemp});
+        }
+      }
+    }
     return SingleChildScrollView(
         child: SizedBox(
       height: 0.8.sh,
       child: ListView.builder(
-          itemCount: widget.listordersdone.length,
-          itemBuilder: (context, index) {
-            return Card(
-              child: ExpansionTile(
-                title: Text(
-                  'Order #${widget.listordersdone[index]['id']}',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w500, fontSize: 18),
+        shrinkWrap: true,
+        itemCount: listdatefilter.length,
+        itemBuilder: (context1, index1) {
+          return Card(
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.topRight,
+                  padding: EdgeInsets.only(right: 10.w, top: 5.h),
+                  child: Text('Tanggal: ${listdatefilter[index1]['date']}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w300, fontSize: 16),
+                      textAlign: TextAlign.end),
                 ),
-                subtitle: Text(
-                    'Nama Order Selesai: ${widget.listordersdone[index]['nama']}',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w500, fontSize: 16)),
-                children: [
-                  const Divider(
-                    endIndent: 5,
-                    indent: 5,
-                    color: Color.fromARGB(255, 99, 120, 136),
-                  ),
-                  Card(
-                    child: SizedBox(
-                      width: 1.sw,
-                      child: Column(
-                        children: [
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            child: const Text(
-                              'Foto: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500, fontSize: 20),
+                ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: listdatefilter[index1]['listorders'].length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ExpansionTile(
+                          title: Text(
+                            'Order #${listdatefilter[index1]['listorders'][index]['id']}',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 18),
+                          ),
+                          subtitle: Text(
+                              'Nama Order Selesai: ${listdatefilter[index1]['listorders'][index]['nama']}',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 16)),
+                          children: [
+                            const Divider(
+                              endIndent: 5,
+                              indent: 5,
+                              color: Color.fromARGB(255, 99, 120, 136),
                             ),
-                          ),
-                          SizedBox(
-                            width: 0.9.sw,
-                            height: 0.4.sh,
-                            child: Container(
-                              alignment: Alignment.center,
-                              width: double.infinity,
-                              height: 300,
-                              color: Colors.grey[300],
-                              child: Image.file(
-                                  File(
-                                      widget.listordersdone[index]['picorder']),
-                                  fit: BoxFit.fill),
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 3, horizontal: 10),
-                            child: Text(
-                                textAlign: TextAlign.left,
-                                "Kordinat 1: \n [${widget.listordersdone[index]['lat1']}, ${widget.listordersdone[index]['lang1']}]",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 17)),
-                          ),
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 3, horizontal: 10),
-                            child: Text(
-                                textAlign: TextAlign.left,
-                                "Kordinat 2: \n [${widget.listordersdone[index]['lat2']}, ${widget.listordersdone[index]['lang2']}]",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 17)),
-                          ),
-                          SizedBox(
-                            width: 0.9.sw,
-                            height: 0.4.sh,
-                            child: FlutterMap(
-                              mapController: mapController,
-                              options: MapOptions(
-                                bounds: LatLngBounds(
-                                  LatLng(widget.listordersdone[index]['lat1'],
-                                      widget.listordersdone[index]['lang1']),
-                                  LatLng(widget.listordersdone[index]['lat2'],
-                                      widget.listordersdone[index]['lang2']),
-                                ),
-                                boundsOptions: const FitBoundsOptions(
-                                    padding: EdgeInsets.all(10)),
-                              ),
-                              children: [
-                                TileLayer(
-                                  urlTemplate:
-                                      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                  userAgentPackageName: 'com.example.app',
-                                ),
-                                MarkerLayer(
-                                  markers: [
-                                    Marker(
-                                      width: 80.0,
-                                      height: 80.0,
-                                      point: LatLng(
-                                          widget.listordersdone[index]['lat1'],
-                                          widget.listordersdone[index]
-                                              ['lang1']),
-                                      builder: (ctx) => Container(
-                                        child: const Icon(Icons.looks_one,
-                                            size: 40, color: Colors.blue),
+                            Card(
+                              child: SizedBox(
+                                width: 1.sw,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5, horizontal: 10),
+                                      child: Text(
+                                        'Tanggal/waktu Order: ${DateFormat.yMd().add_jm().format(DateTime.fromMillisecondsSinceEpoch(listdatefilter[index1]['listorders'][index]['date']))}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16),
                                       ),
                                     ),
-                                    Marker(
-                                      width: 80.0,
-                                      height: 80.0,
-                                      point: LatLng(
-                                          widget.listordersdone[index]['lat2'],
-                                          widget.listordersdone[index]
-                                              ['lang2']),
-                                      builder: (ctx) => Container(
-                                        child: const Icon(Icons.looks_two,
-                                            size: 40, color: Colors.orange),
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5, horizontal: 10),
+                                      child: const Text(
+                                        'Foto: ',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 20),
                                       ),
                                     ),
+                                    SizedBox(
+                                      width: 0.9.sw,
+                                      height: 0.4.sh,
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        width: double.infinity,
+                                        height: 300,
+                                        color: Colors.grey[300],
+                                        child: Image.file(
+                                            File(listdatefilter[index1]
+                                                    ['listorders'][index]
+                                                ['picorder']),
+                                            fit: BoxFit.fill),
+                                      ),
+                                    ),
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3, horizontal: 10),
+                                      child: Text(
+                                          textAlign: TextAlign.left,
+                                          "Kordinat 1: \n [${listdatefilter[index1]['listorders'][index]['lat1']}, ${listdatefilter[index1]['listorders'][index]['lang1']}]",
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 17)),
+                                    ),
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 3, horizontal: 10),
+                                      child: Text(
+                                          textAlign: TextAlign.left,
+                                          "Kordinat 2: \n [${listdatefilter[index1]['listorders'][index]['lat2']}, ${listdatefilter[index1]['listorders'][index]['lang2']}]",
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 17)),
+                                    ),
+                                    SizedBox(
+                                      width: 0.9.sw,
+                                      height: 0.4.sh,
+                                      child: FlutterMap(
+                                        mapController: mapController,
+                                        options: MapOptions(
+                                          interactiveFlags:
+                                              InteractiveFlag.pinchZoom |
+                                                  InteractiveFlag.drag,
+                                          bounds: LatLngBounds(
+                                            LatLng(
+                                                listdatefilter[index1]
+                                                        ['listorders'][index]
+                                                    ['lat1'],
+                                                listdatefilter[index1]
+                                                        ['listorders'][index]
+                                                    ['lang1']),
+                                            LatLng(
+                                                listdatefilter[index1]
+                                                        ['listorders'][index]
+                                                    ['lat2'],
+                                                listdatefilter[index1]
+                                                        ['listorders'][index]
+                                                    ['lang2']),
+                                          ),
+                                          boundsOptions: const FitBoundsOptions(
+                                              padding: EdgeInsets.all(10)),
+                                        ),
+                                        children: [
+                                          TileLayer(
+                                            urlTemplate:
+                                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                            userAgentPackageName:
+                                                'com.example.app',
+                                          ),
+                                          MarkerLayer(
+                                            markers: [
+                                              Marker(
+                                                width: 80.0,
+                                                height: 80.0,
+                                                point: LatLng(
+                                                    listdatefilter[index1]
+                                                            ['listorders']
+                                                        [index]['lat1'],
+                                                    listdatefilter[index1]
+                                                            ['listorders']
+                                                        [index]['lang1']),
+                                                builder: (ctx) => Container(
+                                                  child: const Icon(
+                                                      Icons.looks_one,
+                                                      size: 40,
+                                                      color: Colors.blue),
+                                                ),
+                                              ),
+                                              Marker(
+                                                width: 80.0,
+                                                height: 80.0,
+                                                point: LatLng(
+                                                    listdatefilter[index1]
+                                                            ['listorders']
+                                                        [index]['lat2'],
+                                                    listdatefilter[index1]
+                                                            ['listorders']
+                                                        [index]['lang2']),
+                                                builder: (ctx) => Container(
+                                                  child: const Icon(
+                                                      Icons.looks_two,
+                                                      size: 40,
+                                                      color: Colors.orange),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 8.h,
+                                      width: 1.sw,
+                                    ),
+                                    Center(
+                                      child: Text(
+                                          'Jarak Antara kedua koordinat: ${double.parse(((distance.as(LengthUnit.Meter, LatLng(listdatefilter[index1]['listorders'][index]['lat1'], listdatefilter[index1]['listorders'][index]['lang1']), LatLng(listdatefilter[index1]['listorders'][index]['lat2'], listdatefilter[index1]['listorders'][index]['lang2']))) / 1000).toStringAsFixed(2))} KM',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16)),
+                                    )
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                            width: 1.sw,
-                          ),
-                          Center(
-                            child: Text(
-                                'Jarak Antara kedua koordinat: ${double.parse(((distance.as(LengthUnit.Meter, LatLng(widget.listordersdone[index]['lat1'], widget.listordersdone[index]['lang1']), LatLng(widget.listordersdone[index]['lat2'], widget.listordersdone[index]['lang2']))) / 1000).toStringAsFixed(2))} KM',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16)),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            );
-          }),
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    }),
+              ],
+            ),
+          );
+        },
+      ),
     ));
   }
 }

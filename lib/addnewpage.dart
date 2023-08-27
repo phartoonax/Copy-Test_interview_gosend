@@ -176,8 +176,7 @@ class _AddCoordinatePageState extends State<AddCoordinatePage> {
                                 name: widget.changedorder['nama'],
                                 idUser: widget.changedorder['iduser'],
                                 isnew: 0,
-                                dateEpoch:
-                                    DateTime.now().millisecondsSinceEpoch,
+                                dateEpoch: widget.changedorder['date'],
                                 pictureOrder: widget.Imagebase64,
                                 langitude1: double.parse(lang1Controller.text),
                                 latitude1: double.parse(lat1Controller.text),

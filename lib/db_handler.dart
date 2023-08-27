@@ -94,7 +94,9 @@ class DatabaseHandler {
   Future<List<Orders>> getAllOrdersByStatus(int status, int iduser) async {
     final Database db = await initializedDB();
     List<Map<String, dynamic>> result = await db.query('orders',
-        where: 'isNew=? and iduser=?', whereArgs: [status, iduser], limit: 50);
+        where: 'isNew=? and iduser=?',
+        whereArgs: [status, iduser],
+        orderBy: 'date ASC');
 
     return result.map((e) => Orders.fromMap(e)).toList();
   }
